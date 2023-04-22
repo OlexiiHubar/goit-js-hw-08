@@ -10,18 +10,26 @@ const refs = {
 
 const formData = {};
 
-onPopulateFormData();
 refs.form.addEventListener('submit', onFormSubmit);
 refs.form.addEventListener('input', _trottle(onFormInput, 500));
+onPopulateFormData();
 
 function onFormSubmit(evt) {
   evt.preventDefault();
+  if (formData.email === '' || formData.message === '') {
+    return alert('Поля мають бути заповнені');
+  }
   evt.currentTarget.reset();
   localStorage.removeItem(STORAGE_KEY);
-  console.log(formData);
 }
 
 function onFormInput(e) {
+  let formData = localStorage.getItem(STORAGE_KEY);
+  if (formData) {
+    formData = JSON.parse(formData);
+  } else {
+    console.log(formData);
+  }
   formData[e.target.name] = e.target.value;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
@@ -30,7 +38,7 @@ function onPopulateFormData() {
   const savedFormData = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
   if (savedFormData) {
-    refs.email.value = savedFormData.email;
-    refs.textarea.value = savedFormData.message;
+    refs.email.value = savedFormData.email ? savedFormData.email : '';
+    refs.textarea.value = savedFormData.message ? savedFormData.message : '';
   }
 }
